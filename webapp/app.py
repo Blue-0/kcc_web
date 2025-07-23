@@ -49,49 +49,52 @@ OPTIONS = {
     'customheight': ('--customheight', False),
 }
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
-    if request.method == 'POST':
-        uploaded = request.files.get('file')
-        if not uploaded or uploaded.filename == '':
-            return 'No file uploaded', 400
-        filename = secure_filename(uploaded.filename)
-        src_path = os.path.join(UPLOAD_FOLDER, filename)
-        uploaded.save(src_path)
-        out_option = request.form.get('output')
-        with tempfile.TemporaryDirectory() as tmpdir:
-            cmd = ['python3', os.path.join(ROOT_DIR, 'kcc-c2e.py')]
-            for field, (flag, is_flag) in OPTIONS.items():
-                value = request.form.get(field)
-                if value is None or value == '':
-                    continue
-                if is_flag:
-                    cmd.append(flag)
-                else:
-                    cmd.extend([flag, value])
-            if out_option:
-                cmd.extend(['-o', out_option])
+    return render_template('index.html')
+
+
+@app.route('/convert', methods=['POST'])
+def convert():
+    uploaded = request.files.get('file')
+    if not uploaded or uploaded.filename == '':
+        return 'No file uploaded', 400
+    filename = secure_filename(uploaded.filename)
+    src_path = os.path.join(UPLOAD_FOLDER, filename)
+    uploaded.save(src_path)
+    out_option = request.form.get('output')
+    with tempfile.TemporaryDirectory() as tmpdir:
+        cmd = ['python3', os.path.join(ROOT_DIR, 'kcc-c2e.py')]
+        for field, (flag, is_flag) in OPTIONS.items():
+            value = request.form.get(field)
+            if value is None or value == '':
+                continue
+            if is_flag:
+                cmd.append(flag)
             else:
-                cmd.extend(['-o', tmpdir])
-            cmd.append(src_path)
-            result = subprocess.run(cmd, capture_output=True)
-            if result.returncode != 0:
-                return 'Conversion failed', 500
-            if out_option:
-                if os.path.isdir(out_option):
-                    files = os.listdir(out_option)
-                    if not files:
-                        return 'Conversion failed', 500
-                    out_path = os.path.join(out_option, files[0])
-                else:
-                    out_path = out_option
-            else:
-                files = os.listdir(tmpdir)
+                cmd.extend([flag, value])
+        if out_option:
+            cmd.extend(['-o', out_option])
+        else:
+            cmd.extend(['-o', tmpdir])
+        cmd.append(src_path)
+        result = subprocess.run(cmd, capture_output=True)
+        if result.returncode != 0:
+            return 'Conversion failed', 500
+        if out_option:
+            if os.path.isdir(out_option):
+                files = os.listdir(out_option)
                 if not files:
                     return 'Conversion failed', 500
-                out_path = os.path.join(tmpdir, files[0])
-            return send_file(out_path, as_attachment=True)
-    return render_template('index.html')
+                out_path = os.path.join(out_option, files[0])
+            else:
+                out_path = out_option
+        else:
+            files = os.listdir(tmpdir)
+            if not files:
+                return 'Conversion failed', 500
+            out_path = os.path.join(tmpdir, files[0])
+        return send_file(out_path, as_attachment=True)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

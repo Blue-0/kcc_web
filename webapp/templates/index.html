@@ -4,115 +4,147 @@
     <meta charset="utf-8">
     <title>Kindle Comic Converter Web</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body class="bg-gray-100 p-4">
-<div class="container mx-auto">
-    <h1 class="text-2xl font-bold mb-4">Kindle Comic Converter Web</h1>
-    <form action="/" method="post" enctype="multipart/form-data" class="space-y-4 bg-white p-4 rounded shadow">
+<div id="root"></div>
+<script type="text/babel">
+function App() {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
+    try {
+      const res = await fetch('/convert', { method: 'POST', body: data });
+      if (!res.ok) throw new Error('failed');
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = data.get('output') || 'output.cbz';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      alert('Conversion failed');
+    }
+  };
+  return (
+    <div className="container mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Kindle Comic Converter Web</h1>
+      <form onSubmit={handleSubmit} className="space-y-4 bg-white p-4 rounded shadow" encType="multipart/form-data">
         <div>
-            <label class="block font-semibold">Comic archive/PDF</label>
-            <input type="file" name="file" required class="mt-1 border p-2 w-full" />
-        </div>
-        <div>
-            <label class="block font-semibold">Profile</label>
-            <input type="text" name="profile" placeholder="KV" class="mt-1 border p-2 w-full" />
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-            <label><input type="checkbox" name="manga_style" class="mr-1">Manga style</label>
-            <label><input type="checkbox" name="hq" class="mr-1">HQ</label>
-            <label><input type="checkbox" name="two_panel" class="mr-1">Two panel</label>
-            <label><input type="checkbox" name="webtoon" class="mr-1">Webtoon</label>
-            <label><input type="checkbox" name="comicinfotitle" class="mr-1">Use ComicInfo title</label>
-            <label><input type="checkbox" name="nokepub" class="mr-1">No Kepub</label>
-            <label><input type="checkbox" name="spreadshift" class="mr-1">Spread shift</label>
-            <label><input type="checkbox" name="norotate" class="mr-1">No rotate</label>
-            <label><input type="checkbox" name="rotatefirst" class="mr-1">Rotate first</label>
-            <label><input type="checkbox" name="noprocessing" class="mr-1">No processing</label>
-            <label><input type="checkbox" name="upscale" class="mr-1">Upscale</label>
-            <label><input type="checkbox" name="stretch" class="mr-1">Stretch</label>
-            <label><input type="checkbox" name="autolevel" class="mr-1">Auto level</label>
-            <label><input type="checkbox" name="blackborders" class="mr-1">Black borders</label>
-            <label><input type="checkbox" name="whiteborders" class="mr-1">White borders</label>
-            <label><input type="checkbox" name="forcecolor" class="mr-1">Force color</label>
-            <label><input type="checkbox" name="eraserainbow" class="mr-1">Erase rainbow</label>
-            <label><input type="checkbox" name="forcepng" class="mr-1">Force PNG</label>
-            <label><input type="checkbox" name="mozjpeg" class="mr-1">MozJPEG</label>
-            <label><input type="checkbox" name="maximizestrips" class="mr-1">Maximize strips</label>
-            <label><input type="checkbox" name="delete" class="mr-1">Delete source</label>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label class="block font-semibold">Target size MB</label>
-                <input type="number" name="targetsize" class="mt-1 border p-2 w-full" />
-            </div>
-            <div>
-                <label class="block font-semibold">Output directory</label>
-                <input type="text" name="output" class="mt-1 border p-2 w-full" />
-            </div>
-            <div>
-                <label class="block font-semibold">Title</label>
-                <input type="text" name="title" class="mt-1 border p-2 w-full" />
-            </div>
-            <div>
-                <label class="block font-semibold">Author</label>
-                <input type="text" name="author" class="mt-1 border p-2 w-full" />
-            </div>
-            <div>
-                <label class="block font-semibold">Format</label>
-                <select name="format" class="mt-1 border p-2 w-full">
-                    <option value="Auto">Auto</option>
-                    <option value="CBZ">CBZ</option>
-                    <option value="EPUB">EPUB</option>
-                    <option value="MOBI">MOBI</option>
-                    <option value="KFX">KFX</option>
-                    <option value="MOBI+EPUB">MOBI+EPUB</option>
-                </select>
-            </div>
-            <div>
-                <label class="block font-semibold">Batch split</label>
-                <input type="number" name="batchsplit" class="mt-1 border p-2 w-full" />
-            </div>
-            <div>
-                <label class="block font-semibold">Splitter mode</label>
-                <input type="number" name="splitter" class="mt-1 border p-2 w-full" />
-            </div>
-            <div>
-                <label class="block font-semibold">Gamma</label>
-                <input type="number" step="0.1" name="gamma" class="mt-1 border p-2 w-full" />
-            </div>
-            <div>
-                <label class="block font-semibold">Cropping mode</label>
-                <input type="number" name="cropping" class="mt-1 border p-2 w-full" />
-            </div>
-            <div>
-                <label class="block font-semibold">Cropping power</label>
-                <input type="number" step="0.1" name="croppingpower" class="mt-1 border p-2 w-full" />
-            </div>
-            <div>
-                <label class="block font-semibold">Preserve margin %</label>
-                <input type="number" step="0.1" name="preservemargin" class="mt-1 border p-2 w-full" />
-            </div>
-            <div>
-                <label class="block font-semibold">Cropping minimum</label>
-                <input type="number" step="0.1" name="croppingminimum" class="mt-1 border p-2 w-full" />
-            </div>
-            <div>
-                <label class="block font-semibold">Interpanel crop</label>
-                <input type="number" name="interpanelcrop" class="mt-1 border p-2 w-full" />
-            </div>
-            <div>
-                <label class="block font-semibold">Custom width</label>
-                <input type="number" name="customwidth" class="mt-1 border p-2 w-full" />
-            </div>
-            <div>
-                <label class="block font-semibold">Custom height</label>
-                <input type="number" name="customheight" class="mt-1 border p-2 w-full" />
-            </div>
+          <label className="block font-semibold">Comic archive/PDF</label>
+          <input type="file" name="file" required className="mt-1 border p-2 w-full" />
         </div>
         <div>
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Convert</button>
+          <label className="block font-semibold">Profile</label>
+          <input type="text" name="profile" placeholder="KV" className="mt-1 border p-2 w-full" />
         </div>
-    </form>
-</div>
+        <div className="grid grid-cols-2 gap-4">
+          <label><input type="checkbox" name="manga_style" className="mr-1" />Manga style</label>
+          <label><input type="checkbox" name="hq" className="mr-1" />HQ</label>
+          <label><input type="checkbox" name="two_panel" className="mr-1" />Two panel</label>
+          <label><input type="checkbox" name="webtoon" className="mr-1" />Webtoon</label>
+          <label><input type="checkbox" name="comicinfotitle" className="mr-1" />Use ComicInfo title</label>
+          <label><input type="checkbox" name="nokepub" className="mr-1" />No Kepub</label>
+          <label><input type="checkbox" name="spreadshift" className="mr-1" />Spread shift</label>
+          <label><input type="checkbox" name="norotate" className="mr-1" />No rotate</label>
+          <label><input type="checkbox" name="rotatefirst" className="mr-1" />Rotate first</label>
+          <label><input type="checkbox" name="noprocessing" className="mr-1" />No processing</label>
+          <label><input type="checkbox" name="upscale" className="mr-1" />Upscale</label>
+          <label><input type="checkbox" name="stretch" className="mr-1" />Stretch</label>
+          <label><input type="checkbox" name="autolevel" className="mr-1" />Auto level</label>
+          <label><input type="checkbox" name="blackborders" className="mr-1" />Black borders</label>
+          <label><input type="checkbox" name="whiteborders" className="mr-1" />White borders</label>
+          <label><input type="checkbox" name="forcecolor" className="mr-1" />Force color</label>
+          <label><input type="checkbox" name="eraserainbow" className="mr-1" />Erase rainbow</label>
+          <label><input type="checkbox" name="forcepng" className="mr-1" />Force PNG</label>
+          <label><input type="checkbox" name="mozjpeg" className="mr-1" />MozJPEG</label>
+          <label><input type="checkbox" name="maximizestrips" className="mr-1" />Maximize strips</label>
+          <label><input type="checkbox" name="delete" className="mr-1" />Delete source</label>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block font-semibold">Target size MB</label>
+            <input type="number" name="targetsize" className="mt-1 border p-2 w-full" />
+          </div>
+          <div>
+            <label className="block font-semibold">Output directory</label>
+            <input type="text" name="output" className="mt-1 border p-2 w-full" />
+          </div>
+          <div>
+            <label className="block font-semibold">Title</label>
+            <input type="text" name="title" className="mt-1 border p-2 w-full" />
+          </div>
+          <div>
+            <label className="block font-semibold">Author</label>
+            <input type="text" name="author" className="mt-1 border p-2 w-full" />
+          </div>
+          <div>
+            <label className="block font-semibold">Format</label>
+            <select name="format" className="mt-1 border p-2 w-full">
+              <option value="Auto">Auto</option>
+              <option value="CBZ">CBZ</option>
+              <option value="EPUB">EPUB</option>
+              <option value="MOBI">MOBI</option>
+              <option value="KFX">KFX</option>
+              <option value="MOBI+EPUB">MOBI+EPUB</option>
+            </select>
+          </div>
+          <div>
+            <label className="block font-semibold">Batch split</label>
+            <input type="number" name="batchsplit" className="mt-1 border p-2 w-full" />
+          </div>
+          <div>
+            <label className="block font-semibold">Splitter mode</label>
+            <input type="number" name="splitter" className="mt-1 border p-2 w-full" />
+          </div>
+          <div>
+            <label className="block font-semibold">Gamma</label>
+            <input type="number" step="0.1" name="gamma" className="mt-1 border p-2 w-full" />
+          </div>
+          <div>
+            <label className="block font-semibold">Cropping mode</label>
+            <input type="number" name="cropping" className="mt-1 border p-2 w-full" />
+          </div>
+          <div>
+            <label className="block font-semibold">Cropping power</label>
+            <input type="number" step="0.1" name="croppingpower" className="mt-1 border p-2 w-full" />
+          </div>
+          <div>
+            <label className="block font-semibold">Preserve margin %</label>
+            <input type="number" step="0.1" name="preservemargin" className="mt-1 border p-2 w-full" />
+          </div>
+          <div>
+            <label className="block font-semibold">Cropping minimum</label>
+            <input type="number" step="0.1" name="croppingminimum" className="mt-1 border p-2 w-full" />
+          </div>
+          <div>
+            <label className="block font-semibold">Interpanel crop</label>
+            <input type="number" name="interpanelcrop" className="mt-1 border p-2 w-full" />
+          </div>
+          <div>
+            <label className="block font-semibold">Custom width</label>
+            <input type="number" name="customwidth" className="mt-1 border p-2 w-full" />
+          </div>
+          <div>
+            <label className="block font-semibold">Custom height</label>
+            <input type="number" name="customheight" className="mt-1 border p-2 w-full" />
+          </div>
+        </div>
+        <div>
+          <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Convert</button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
+</script>
 </body>
 </html>
