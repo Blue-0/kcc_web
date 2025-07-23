@@ -10,6 +10,11 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app = Flask(__name__)
 
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
+
+
 OPTIONS = {
     'profile': ('-p', False),
     'manga_style': ('-m', True),
@@ -78,8 +83,12 @@ def convert():
         else:
             cmd.extend(['-o', tmpdir])
         cmd.append(src_path)
-        result = subprocess.run(cmd, capture_output=True)
+        result = subprocess.run(cmd, capture_output=True, text=True)
         if result.returncode != 0:
+            print('Command failed:', ' '.join(cmd))
+            print(result.stdout)
+            print(result.stderr)
+
             return 'Conversion failed', 500
         if out_option:
             if os.path.isdir(out_option):
