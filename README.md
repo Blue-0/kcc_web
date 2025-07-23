@@ -412,3 +412,14 @@ Copyright (c) 2012-2025 Ciro Mattia Gonano, Paweł Jastrzębski, Darodi and Alex
 
 ## Verification
 Impact-Site-Verification: ffe48fc7-4f0c-40fd-bd2e-59f4d7205180
+
+## WEB INTERFACE
+A minimal Flask application is available in `webapp/app.py` for running KCC through a browser.
+After installing the dependencies, start the server with:
+
+```bash
+pip install -r requirements.txt
+python3 webapp/app.py
+```
+
+The application listens on port `5000`. Upload a comic archive or PDF and the converted file will be offered for download. This script can be deployed on any standard Python host such as Hostinger.
