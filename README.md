@@ -412,3 +412,24 @@ Copyright (c) 2012-2025 Ciro Mattia Gonano, Paweł Jastrzębski, Darodi and Alex
 
 ## Verification
 Impact-Site-Verification: ffe48fc7-4f0c-40fd-bd2e-59f4d7205180
+
+## WEB INTERFACE
+The server is now implemented with [Express](https://expressjs.com/) in
+`webapp/server.js`. The front-end is a small [React](https://react.dev) app
+styled with [Tailwind CSS](https://tailwindcss.com/) and exposes form controls
+for every command line option.
+
+```bash
+# install Python dependencies for the CLI
+pip install -r requirements.txt
+# install Node dependencies for the web server
+cd webapp && npm install
+# start the server
+node server.js
+```
+
+The application listens on port `5000`. Upload a comic archive or PDF and the
+converted file will be offered for download. Ensure external dependencies like
+KindleGen are installed so conversions succeed. The server uses `python3` by
+default; set the `PYTHON` environment variable if your Python 3 executable is
+named differently (e.g. `python` on Windows).
