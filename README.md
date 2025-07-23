@@ -414,8 +414,9 @@ Copyright (c) 2012-2025 Ciro Mattia Gonano, Paweł Jastrzębski, Darodi and Alex
 Impact-Site-Verification: ffe48fc7-4f0c-40fd-bd2e-59f4d7205180
 
 ## WEB INTERFACE
-A minimal Flask application is available in `webapp/app.py` for running KCC through a browser.
-After installing the dependencies, start the server with:
+A Flask application is available in `webapp/app.py` for running KCC through a browser.
+The HTML interface is styled with [Tailwind CSS](https://tailwindcss.com/) and exposes
+all command line options. After installing the dependencies, start the server with:
 
 ```bash
 pip install -r requirements.txt
