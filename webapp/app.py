@@ -14,6 +14,7 @@ app = Flask(__name__)
 def favicon():
     return '', 204
 
+
 OPTIONS = {
     'profile': ('-p', False),
     'manga_style': ('-m', True),
@@ -87,6 +88,7 @@ def convert():
             print('Command failed:', ' '.join(cmd))
             print(result.stdout)
             print(result.stderr)
+
             return 'Conversion failed', 500
         if out_option:
             if os.path.isdir(out_option):
