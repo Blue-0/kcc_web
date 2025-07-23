@@ -412,3 +412,17 @@ Copyright (c) 2012-2025 Ciro Mattia Gonano, Paweł Jastrzębski, Darodi and Alex
 
 ## Verification
 Impact-Site-Verification: ffe48fc7-4f0c-40fd-bd2e-59f4d7205180
+
+## WEB INTERFACE
+A Flask application in `webapp/app.py` exposes KCC through a browser.
+The web page is a small [React](https://react.dev) app styled with
+[Tailwind CSS](https://tailwindcss.com/). It provides form controls for every
+command line option. Start the server with:
+
+```bash
+pip install -r requirements.txt
+python3 webapp/app.py
+```
+
+The application listens on port `5000`. Upload a comic archive or PDF and the converted file will be offered for download. This script can be deployed on any standard Python host such as Hostinger.
+Ensure external dependencies like KindleGen are installed so conversions succeed.
