@@ -1,6 +1,8 @@
 import os
 import subprocess
 import tempfile
+import sys
+
 from flask import Flask, request, send_file, render_template
 from werkzeug.utils import secure_filename
 
@@ -9,6 +11,10 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app = Flask(__name__)
+
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
 
 OPTIONS = {
     'profile': ('-p', False),
@@ -64,7 +70,7 @@ def convert():
     uploaded.save(src_path)
     out_option = request.form.get('output')
     with tempfile.TemporaryDirectory() as tmpdir:
-        cmd = ['python3', os.path.join(ROOT_DIR, 'kcc-c2e.py')]
+        cmd = [sys.executable, os.path.join(ROOT_DIR, 'kcc-c2e.py')]
         for field, (flag, is_flag) in OPTIONS.items():
             value = request.form.get(field)
             if value is None or value == '':
@@ -78,8 +84,11 @@ def convert():
         else:
             cmd.extend(['-o', tmpdir])
         cmd.append(src_path)
-        result = subprocess.run(cmd, capture_output=True)
+        result = subprocess.run(cmd, capture_output=True, text=True)
         if result.returncode != 0:
+            print('Command failed:', ' '.join(cmd))
+            print(result.stdout)
+            print(result.stderr)
             return 'Conversion failed', 500
         if out_option:
             if os.path.isdir(out_option):
