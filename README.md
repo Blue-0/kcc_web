@@ -425,3 +425,5 @@ python3 webapp/app.py
 ```
 
 The application listens on port `5000`. Upload a comic archive or PDF and the converted file will be offered for download. This script can be deployed on any standard Python host such as Hostinger.
+Ensure external dependencies like KindleGen are installed so conversions succeed.
+
