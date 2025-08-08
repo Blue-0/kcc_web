@@ -12,3 +12,5 @@ KindleComicConverter*.egg-info/
 /kindlegen*
 /kcc.bat
 .DS_Store
+/webapp/node_modules/
+/webapp/uploads/
